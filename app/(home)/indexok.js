@@ -13,7 +13,6 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as MediaLibrary from "expo-media-library"; // provides a usePermissions() hook that requests permissions to access the user's media library.
 import { captureRef } from "react-native-view-shot"; // captureRef() function to take a screenshot of the current view.
 import domtoimage from "dom-to-image";
-import { useRouter } from "expo-router";
 
 const PlaceholderImage = require("../../assets/event.jpg");
 
@@ -79,8 +78,8 @@ export default function App() {
       try {
         const dataUrl = await domtoimage.toJpeg(imageRef.current, {
           quality: 0.95,
-          width: 300,
-          height: 350,
+          width: 320,
+          height: 440,
         });
 
         let link = document.createElement("a");
@@ -91,18 +90,6 @@ export default function App() {
         console.log(e);
       }
     }
-  };
-
-  const router = useRouter();
-
-  const onGoToDetails = () => {
-    router.push({
-      pathname: "/(home)/ImageDetails",
-      params: {
-        selectedImage: selectedImage,
-        imageSize: 300, // Pass the image size to the details screen
-      },
-    });
   };
 
   return (
@@ -131,11 +118,6 @@ export default function App() {
               onPress={onSaveImageAsync}
             />
           </View>
-          <Button
-            style={styles.nameplace}
-            label="NameThePlace"
-            onPress={onGoToDetails} // Navigate to ImageDetailsScreen
-          />
         </View>
       ) : (
         <View style={styles.footerContainer}>
@@ -170,21 +152,16 @@ const styles = StyleSheet.create({
     paddingTop: 60,
   },
   image: {
-    width: 300,
-    height: 350,
+    width: 320,
+    height: 440,
     borderRadius: 18,
   },
   optionsContainer: {
     position: "absolute",
-    bottom: 5,
-    width: "100%",
-    alignItems: "center",
+    bottom: 80,
   },
   optionsRow: {
     alignItems: "center",
     flexDirection: "row",
-    justifyContent: "space-between",
-    width: "82%",
-    marginBottom: 20,
   },
 });
