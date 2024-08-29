@@ -1,11 +1,20 @@
-import { visionService } from "../services/vision.js";
-import sharp from "sharp";
+// import { visionService } from "../services/vision.js";
+const sharp = require("sharp");
+const visionService = require("../service/vision.js");
 
 // app.post('/visionupload', visionUpload.single('image'), async (req, res) => {
-export const sendImg = async (req, res) => {
+const sendImg = async (req, res) => {
   try {
+    // req is multipart form data, log the form it so we can check it
+    console.log("Form fields:", req.body);
+    // Log the file data (if any)
+    console.log("File details:", req.file);
+
     if (!req.file) {
-      return res.status(400).send("No file uploaded.");
+      return res.status(400).send({
+        success: false,
+        error: "Please upload an image",
+      });
     }
 
     // Resize the image using sharp
@@ -20,6 +29,7 @@ export const sendImg = async (req, res) => {
     delete req.file;
 
     const assistantResponse = await visionService.sendImgToOpenAI(base64Image);
+    // const assistantResponse = "Hello from the backend!";
     res.status(200).json({ success: true, answer: assistantResponse });
   } catch (error) {
     console.error("Error processing image:", error);
@@ -28,3 +38,4 @@ export const sendImg = async (req, res) => {
       .json({ success: false, error: "Internal server error from C" });
   }
 };
+module.exports = { sendImg };

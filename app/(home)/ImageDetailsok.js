@@ -1,20 +1,12 @@
 import React, { useRef, useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Button,
-  Alert,
-  Platform,
-  ScrollView,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, StyleSheet, Button, Alert, Platform } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import ImageViewer from "../../src/components/ImageViewer"; // Adjust the path as needed
 import PlaceholderImage from "../../assets/event.jpg"; // Ensure this path is correct
 import { captureRef } from "react-native-view-shot";
 import * as MediaLibrary from "expo-media-library";
 import { uploadImage } from "./upload"; // Adjust the path as needed
+import { ScrollView } from "react-native-gesture-handler";
 
 const ImageDetailsScreen = () => {
   const { selectedImage, imageSize } = useLocalSearchParams();
@@ -22,16 +14,12 @@ const ImageDetailsScreen = () => {
   const router = useRouter();
   const viewRef = useRef(null);
 
-  // Call http://localhost:8000/api/simple and get the string response which we will use to set the description
+  // call http://localhost:8000/api/simple and get the string response which we will use to set the description
   const getSimpleResponse = async () => {
-    try {
-      const response = await uploadImage(selectedImage);
-      console.log("response:", response);
-      if (response.success) {
-        setDescription(response.answer);
-      }
-    } catch (error) {
-      console.error("Error fetching response:", error);
+    const response = await uploadImage(selectedImage);
+    console.log("response:", response);
+    if (response.success) {
+      setDescription(response.answer);
     }
   };
 
@@ -79,23 +67,16 @@ const ImageDetailsScreen = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.imageContainer}>
+      <View ref={viewRef}>
         <ImageViewer
           placeholderImageSource={PlaceholderImage}
           selectedImage={selectedImage}
-          //   style={{ width: 100, height: 150 }} // Set the size of the image
+          style={{ width: imageSize, height: imageSize }} // Set the size of the image
         />
+        <Text style={styles.label}>Location:</Text>
+        <Text style={styles.description}>{description}</Text>
       </View>
-      <ScrollView style={styles.scrollContainer}>
-        <View ref={viewRef} style={styles.contentContainer}>
-          <Text style={styles.label}>Location:</Text>
-          <Text style={styles.description}>{description}</Text>
-        </View>
-      </ScrollView>
-      {/* <Button title="Save" onPress={onSaveDetails} style={styles.saveButton} /> */}
-      <TouchableOpacity onPress={onSaveDetails} style={styles.saveButton}>
-        <Text style={styles.saveButtonText}>Save</Text>
-      </TouchableOpacity>
+      <Button title="Save" onPress={onSaveDetails} />
     </View>
   );
 };
@@ -105,20 +86,9 @@ export default ImageDetailsScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#677778",
-    paddingTop: 20,
-  },
-  imageContainer: {
-    flex: 1,
-    paddingTop: 10,
-    alignItems: "center",
-  },
-  scrollContainer: {
-    flex: 1,
-    marginTop: 200, // Adjust based on the size of your image
-  },
-  contentContainer: {
     padding: 20,
+    backgroundColor: "#fff",
+    alignItems: "center", // Center the content horizontally
   },
   label: {
     fontSize: 18,
@@ -127,26 +97,7 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 16,
-    marginBottom: 70,
+    marginBottom: 20,
     textAlign: "center",
-  },
-  //   saveButton: {
-  //     marginTop: 20,
-  //     marginHorizontal: 20,
-  //     backgroundColor: "#007BFF", // Background color of the button
-  //     borderRadius: 5, // Rounded corners
-  //     padding: 10, // Padding inside the button
-  //     alignItems: "center", // Center align text
-  //   },
-  saveButton: {
-    marginTop: 20,
-    marginHorizontal: 20,
-    color: "#fff",
-    alignItems: "center",
-  },
-  saveButtonText: {
-    color: "#fff", // Text color of the button
-    fontSize: 16,
-    fontWeight: "bold",
   },
 });

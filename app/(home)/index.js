@@ -132,7 +132,6 @@ export default function App() {
             />
           </View>
           <Button
-            style={styles.nameplace}
             label="NameThePlace"
             onPress={onGoToDetails} // Navigate to ImageDetailsScreen
           />
