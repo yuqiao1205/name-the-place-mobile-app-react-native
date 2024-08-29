@@ -105,7 +105,7 @@ export default ImageDetailsScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ddeaf0",
+    backgroundColor: "#2b2d3b",
     paddingTop: 20,
   },
   imageContainer: {
@@ -124,11 +124,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 10,
+    color: "#f5f5ed",
   },
   description: {
     fontSize: 16,
     marginBottom: 70,
     textAlign: "left",
+    color: "#f5f5ed",
   },
   //   saveButton: {
   //     marginTop: 20,
@@ -139,13 +141,13 @@ const styles = StyleSheet.create({
   //     alignItems: "center", // Center align text
   //   },
   saveButton: {
-    marginTop: 20,
+    marginTop: 10,
     marginHorizontal: 20,
-    color: "#fff",
+    color: "#f0cf29",
     alignItems: "center",
   },
   saveButtonText: {
-    color: "#1732e3", // Text color of the button
+    color: "#dea835", // Text color of the button
     fontSize: 16,
     fontWeight: "bold",
   },
