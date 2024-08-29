@@ -39,7 +39,7 @@ const sendImgToOpenAI = async (base64Image) => {
     const response = await axios.post(
       openaiEndpoint,
       {
-        model: "gpt-4-vision-preview",
+        model: "gpt-4o",
         messages: prompt,
         max_tokens: 150,
         temperature: 0.0,

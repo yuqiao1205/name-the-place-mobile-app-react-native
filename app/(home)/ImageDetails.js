@@ -105,7 +105,7 @@ export default ImageDetailsScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#677778",
+    backgroundColor: "#ddeaf0",
     paddingTop: 20,
   },
   imageContainer: {
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     flex: 1,
-    marginTop: 200, // Adjust based on the size of your image
+    marginTop: 100, // Adjust based on the size of your image
   },
   contentContainer: {
     padding: 20,
@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 16,
     marginBottom: 70,
-    textAlign: "center",
+    textAlign: "left",
   },
   //   saveButton: {
   //     marginTop: 20,
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   saveButtonText: {
-    color: "#fff", // Text color of the button
+    color: "#1732e3", // Text color of the button
     fontSize: 16,
     fontWeight: "bold",
   },

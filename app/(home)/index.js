@@ -123,7 +123,12 @@ export default function App() {
       {showAppOptions ? (
         <View style={styles.optionsContainer}>
           <View style={styles.optionsRow}>
-            <IconButton icon="refresh" label="Reset" onPress={onReset} />
+            <IconButton
+              icon="refresh"
+              label="Reset"
+              onPress={onReset}
+              color="#1732e3"
+            />
             <CircleButton onPress={onAddSticker} />
             <IconButton
               icon="save-alt"
@@ -161,7 +166,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#677778",
+    backgroundColor: "#2b2d3b",
     alignItems: "center",
   },
   imageContainer: {
