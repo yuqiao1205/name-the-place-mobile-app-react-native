@@ -14,6 +14,7 @@ import * as MediaLibrary from "expo-media-library"; // provides a usePermissions
 import { captureRef } from "react-native-view-shot"; // captureRef() function to take a screenshot of the current view.
 import domtoimage from "dom-to-image";
 import { useRouter } from "expo-router";
+import * as ImageManipulator from "expo-image-manipulator";
 
 const PlaceholderImage = require("../../assets/event.jpg");
 
@@ -40,7 +41,25 @@ export default function App() {
     if (!result.canceled) {
       console.log("result:", result); // Add this line to check the result
 
-      setSelectedImage(result.assets[0].uri);
+      const resizedImage = await ImageManipulator.manipulateAsync(
+        result.assets[0].uri,
+        [
+          {
+            resize: {
+              width: 512,
+              height: 512,
+            },
+          },
+        ],
+        {
+          compress: 1,
+          format: ImageManipulator.SaveFormat.JPEG,
+        }
+      );
+
+      // setSelectedImage(result.assets[0].uri);
+      setSelectedImage(resizedImage.uri);
+
       setShowAppOptions(false);
     } else {
       alert("You did not select any image.");

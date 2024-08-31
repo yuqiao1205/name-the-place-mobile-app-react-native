@@ -1,5 +1,9 @@
 import { Platform } from "react-native";
 
+// const URL = "http://localhost:8000/api/vision"
+const URL = "https://vercel-test2-silk.vercel.app/api/vision";
+// const URL = "http://192.168.1.119:5050/api/vision";
+
 const uploadImage = async (imageUri) => {
   const formData = new FormData();
 
@@ -19,7 +23,7 @@ const uploadImage = async (imageUri) => {
   formData.append("photo", imageData);
 
   try {
-    const response = await fetch("http://localhost:8000/api/vision", {
+    const response = await fetch(URL, {
       method: "POST",
       headers: {
         "Content-Type": "multipart/form-data",
