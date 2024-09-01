@@ -1,7 +1,8 @@
 import { Platform } from "react-native";
 
-// Adjust the URL based on your environment
+// const URL = "http://localhost:8000/api/vision";
 const URL = "https://vercel-test2-silk.vercel.app/api/vision";
+// const URL = "http://192.168.1.119:5050/api/vision";
 
 const uploadImage = async (imageUri) => {
   const formData = new FormData();
@@ -11,29 +12,22 @@ const uploadImage = async (imageUri) => {
   const match = /\.(\w+)$/.exec(filename);
   const type = match ? `image/${match[1]}` : `image`;
 
-  // For web, we need to handle files differently
-  let imageData;
-
-  if (Platform.OS === "web") {
-    const response = await fetch(imageUri);
-    const blob = await response.blob();
-    imageData = new File([blob], filename, { type: blob.type });
-  } else {
-    // Mobile platform handling (iOS/Android)
-    imageData = {
-      uri:
-        Platform.OS === "android" ? imageUri : imageUri.replace("file://", ""),
-      name: filename,
-      type: type,
-    };
-  }
+  // Append the image file to FormData
+  const imageData = {
+    uri: Platform.OS === "android" ? imageUri : imageUri.replace("file://", ""),
+    name: filename,
+    type: type,
+  };
+  console.log(imageData);
 
   formData.append("photo", imageData);
 
   try {
     const response = await fetch(URL, {
       method: "POST",
-      // Let the fetch API handle the Content-Type for formData
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
       body: formData,
     });
 
