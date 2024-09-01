@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, Image, Platform } from "react-native";
+import { StyleSheet, Text, View, Platform, Image } from "react-native";
 import Button from "../../src/components/Button";
 import ImageViewer from "../../src/components/ImageViewer";
 import * as ImagePicker from "expo-image-picker";
@@ -32,37 +32,106 @@ export default function App() {
     requestPermission();
   }
 
+  // const pickImageAsync = async () => {
+  //   let result = await ImagePicker.launchImageLibraryAsync({
+  //     allowsEditing: true,
+  //     quality: 1,
+  //   });
+
+  //   if (!result.canceled) {
+  //     console.log("result:", result); // Add this line to check the result
+
+  //     const resizedImage = await ImageManipulator.manipulateAsync(
+  //       result.assets[0].uri,
+  //       [
+  //         {
+  //           resize: {
+  //             width: 512,
+  //             height: 512,
+  //           },
+  //         },
+  //       ],
+  //       {
+  //         compress: 1,
+  //         format: ImageManipulator.SaveFormat.JPEG,
+  //       }
+  //     );
+
+  //     // setSelectedImage(result.assets[0].uri);
+  //     setSelectedImage(resizedImage.uri);
+
+  //     setShowAppOptions(false);
+  //   } else {
+  //     alert("You did not select any image.");
+  //   }
+  // };
+
   const pickImageAsync = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      allowsEditing: true,
-      quality: 1,
-    });
+    if (Platform.OS === "web") {
+      // Web-specific code
+      const fileInput = document.createElement("input");
+      fileInput.type = "file";
+      fileInput.accept = "image/*";
+      fileInput.onchange = async (event) => {
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = async (e) => {
+            const imageUri = e.target.result;
 
-    if (!result.canceled) {
-      console.log("result:", result); // Add this line to check the result
-
-      const resizedImage = await ImageManipulator.manipulateAsync(
-        result.assets[0].uri,
-        [
-          {
-            resize: {
-              width: 512,
-              height: 512,
-            },
-          },
-        ],
-        {
-          compress: 1,
-          format: ImageManipulator.SaveFormat.JPEG,
+            // Web-specific resize using canvas
+            const canvas = document.createElement("canvas");
+            const img = new window.Image(); // Use window.Image instead of Image
+            img.src = imageUri;
+            img.onload = () => {
+              const ctx = canvas.getContext("2d");
+              canvas.width = 512;
+              canvas.height = 512;
+              ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+              canvas.toBlob(async (blob) => {
+                const resizedUri = URL.createObjectURL(blob);
+                setSelectedImage(resizedUri);
+                setShowAppOptions(false);
+              }, "image/jpeg");
+            };
+          };
+          reader.readAsDataURL(file);
+        } else {
+          alert("You did not select any image.");
         }
-      );
-
-      // setSelectedImage(result.assets[0].uri);
-      setSelectedImage(resizedImage.uri);
-
-      setShowAppOptions(false);
+      };
+      fileInput.click();
     } else {
-      alert("You did not select any image.");
+      // Mobile-specific code
+      let result = await ImagePicker.launchImageLibraryAsync({
+        allowsEditing: true,
+        quality: 1,
+      });
+
+      if (!result.canceled) {
+        console.log("result:", result);
+
+        const resizedImage = await ImageManipulator.manipulateAsync(
+          result.assets[0].uri,
+          [
+            {
+              resize: {
+                width: 512,
+                height: 512,
+              },
+            },
+          ],
+          {
+            compress: 1,
+            format: ImageManipulator.SaveFormat.JPEG,
+          }
+        );
+
+        setSelectedImage(resizedImage.uri);
+        setShowAppOptions(false);
+      } else {
+        alert("You did not select any image.");
+      }
     }
   };
 
