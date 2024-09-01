@@ -14,7 +14,7 @@ import ImageViewer from "../../src/components/ImageViewer"; // Adjust the path a
 import PlaceholderImage from "../../assets/event.jpg"; // Ensure this path is correct
 import { captureRef } from "react-native-view-shot";
 import * as MediaLibrary from "expo-media-library";
-import { uploadImage } from "./upload"; // Adjust the path as needed
+import { uploadImage } from "./upload";
 
 const ImageDetailsScreen = () => {
   const { selectedImage, imageSize } = useLocalSearchParams();
