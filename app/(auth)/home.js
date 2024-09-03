@@ -181,17 +181,19 @@ export default function App() {
               icon="refresh"
               label="Reset"
               onPress={onReset}
-              color="#1732e3"
+              color="black"
             />
             <CircleButton onPress={onAddSticker} />
             <IconButton
               icon="save-alt"
               label="Save"
               onPress={onSaveImageAsync}
+              color="black"
             />
           </View>
-          <Button
+          <IconButton
             label="NameThePlace"
+            icon="location-on"
             onPress={onGoToDetails} // Navigate to ImageDetailsScreen
           />
         </View>
@@ -220,7 +222,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#2b2d3b",
+    backgroundColor: "#f5f5f2", // image viewer background color
     alignItems: "center",
   },
   imageContainer: {

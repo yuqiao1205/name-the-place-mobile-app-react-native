@@ -68,7 +68,7 @@ const Register = () => {
         <>
           <TextInput
             autoCapitalize="none"
-            placeholder="simon@galaxies.dev"
+            placeholder="your@email.com"
             value={emailAddress}
             onChangeText={setEmailAddress}
             style={styles.inputField}

@@ -44,7 +44,7 @@ const Login = () => {
 
       <TextInput
         autoCapitalize="none"
-        placeholder="simon@galaxies.dev"
+        placeholder="youemail@gmail.com"
         value={emailAddress}
         onChangeText={setEmailAddress}
         style={styles.inputField}
@@ -57,7 +57,7 @@ const Login = () => {
         style={styles.inputField}
       />
 
-      <Button onPress={onSignInPress} title="Login" color={"#6c47ff"} />
+      <Button onPress={onSignInPress} title="Login" color={"#d93489"} />
 
       <Link href="/reset" asChild>
         <Pressable style={styles.button}>

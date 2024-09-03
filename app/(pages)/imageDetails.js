@@ -22,6 +22,7 @@ const ImageDetailsScreen = () => {
   const [description, setDescription] = useState("Beautiful Place"); // Default description
   const router = useRouter();
   const viewRef = useRef(null);
+  const [isHovered, setIsHovered] = useState(false);
 
   // Fetch the description from the server
   useEffect(() => {
@@ -87,7 +88,7 @@ const ImageDetailsScreen = () => {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
         <TouchableOpacity onPress={navigateHome}>
-          <Icon name="home-outline" size={30} color="#dea835" />
+          <Icon name="home-outline" size={30} color="white" />
         </TouchableOpacity>
       </View>
       <ScrollView contentContainerStyle={styles.container}>
@@ -101,7 +102,16 @@ const ImageDetailsScreen = () => {
           <Text style={styles.label}>Location:</Text>
           <Text style={styles.description}>{description}</Text>
         </View>
-        <TouchableOpacity onPress={onSaveDetails} style={styles.saveButton}>
+        <TouchableOpacity
+          onPress={onSaveDetails}
+          style={[
+            styles.saveButton,
+            { backgroundColor: isHovered ? "#8a2be2" : "#979999" }, // Change background color on hover
+          ]}
+          activeOpacity={0.7} // Change opacity when pressed
+          onPressIn={() => setIsHovered(true)} // Start hover effect
+          onPressOut={() => setIsHovered(false)} // End hover effect
+        >
           <Text style={styles.saveButtonText}>Save</Text>
         </TouchableOpacity>
       </ScrollView>
@@ -114,17 +124,19 @@ export default ImageDetailsScreen;
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#2b2d3b",
+    backgroundColor: "#d93489",
   },
   header: {
     flexDirection: "row",
     justifyContent: "flex-end",
     padding: 15,
+    // header color pink
   },
   container: {
     flexGrow: 1,
     justifyContent: "space-between",
     padding: 20,
+    backgroundColor: "#f5f5f2", // screen background color light gray
   },
   contentContainer: {
     flex: 1,
@@ -139,21 +151,21 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 10,
-    color: "#f5f5ed",
+    color: "black",
   },
   description: {
     fontSize: 16,
     textAlign: "left",
-    color: "#f5f5ed",
+    color: "black", // text color black
   },
   saveButton: {
-    backgroundColor: "#6c47ff",
+    backgroundColor: "gray", // purple color
     padding: 15,
     borderRadius: 8,
     alignItems: "center",
   },
   saveButtonText: {
-    color: "#dea835",
+    color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
   },

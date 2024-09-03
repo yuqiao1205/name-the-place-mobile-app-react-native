@@ -1,10 +1,11 @@
-import { Pressable, StyleSheet, Text } from 'react-native';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { Pressable, StyleSheet, Text } from "react-native";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 export default function IconButton({ icon, label, onPress }) {
   return (
     <Pressable style={styles.iconButton} onPress={onPress}>
-      <MaterialIcons name={icon} size={24} color="#fff" />
+      {/* set icon color to black */}
+      <MaterialIcons name={icon} size={24} color="black" />
       <Text style={styles.iconButtonLabel}>{label}</Text>
     </Pressable>
   );
@@ -12,11 +13,12 @@ export default function IconButton({ icon, label, onPress }) {
 
 const styles = StyleSheet.create({
   iconButton: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   iconButtonLabel: {
-    color: '#fff',
+    //icon text color is black rest and save
+    color: "black",
     marginTop: 12,
   },
 });
