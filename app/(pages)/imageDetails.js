@@ -1,20 +1,21 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import {
   View,
   Text,
   StyleSheet,
-  Button,
   Alert,
   Platform,
   ScrollView,
   TouchableOpacity,
+  SafeAreaView,
 } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
-import ImageViewer from "../../src/components/ImageViewer"; // Adjust the path as needed
+import ImageViewer from "../../src/components/ImageViewer.js"; // Adjust the path as needed
 import PlaceholderImage from "../../assets/event.jpg"; // Ensure this path is correct
 import { captureRef } from "react-native-view-shot";
 import * as MediaLibrary from "expo-media-library";
-import { uploadImage } from "./upload";
+import { uploadImage } from "../../src/components/upload.js";
+import Icon from "react-native-vector-icons/Ionicons";
 
 const ImageDetailsScreen = () => {
   const { selectedImage, imageSize } = useLocalSearchParams();
@@ -22,22 +23,24 @@ const ImageDetailsScreen = () => {
   const router = useRouter();
   const viewRef = useRef(null);
 
-  // Call http://localhost:8000/api/simple and get the string response which we will use to set the description
-  const getSimpleResponse = async () => {
-    try {
-      const response = await uploadImage(selectedImage);
-      console.log("response:", response);
-      if (response.success) {
-        setDescription(response.answer);
+  // Fetch the description from the server
+  useEffect(() => {
+    const getSimpleResponse = async () => {
+      try {
+        const response = await uploadImage(selectedImage);
+        console.log("response:", response);
+        if (response.success) {
+          setDescription(response.answer);
+        }
+      } catch (error) {
+        console.error("Error fetching response:", error);
       }
-    } catch (error) {
-      console.error("Error fetching response:", error);
-    }
-  };
+    };
 
-  // Call the function to get the simple response
-  console.log("selectedImage:", selectedImage);
-  getSimpleResponse();
+    if (selectedImage) {
+      getSimpleResponse();
+    }
+  }, [selectedImage]);
 
   const onSaveDetails = async () => {
     if (Platform.OS !== "web") {
@@ -55,7 +58,6 @@ const ImageDetailsScreen = () => {
         // Capture screenshot of the view
         const uri = await captureRef(viewRef, {
           format: "png",
-          height: 350,
           quality: 1.0,
         });
 
@@ -77,48 +79,61 @@ const ImageDetailsScreen = () => {
     }
   };
 
+  const navigateHome = () => {
+    router.replace("/home");
+  };
+
   return (
-    <View style={styles.container}>
-      <View style={styles.imageContainer}>
-        <ImageViewer
-          placeholderImageSource={PlaceholderImage}
-          selectedImage={selectedImage}
-          //   style={{ width: 100, height: 150 }} // Set the size of the image
-        />
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={navigateHome}>
+          <Icon name="home-outline" size={30} color="#dea835" />
+        </TouchableOpacity>
       </View>
-      <ScrollView style={styles.scrollContainer}>
+      <ScrollView contentContainerStyle={styles.container}>
         <View ref={viewRef} style={styles.contentContainer}>
+          <View style={styles.imageContainer}>
+            <ImageViewer
+              placeholderImageSource={PlaceholderImage}
+              selectedImage={selectedImage}
+            />
+          </View>
           <Text style={styles.label}>Location:</Text>
           <Text style={styles.description}>{description}</Text>
         </View>
+        <TouchableOpacity onPress={onSaveDetails} style={styles.saveButton}>
+          <Text style={styles.saveButtonText}>Save</Text>
+        </TouchableOpacity>
       </ScrollView>
-      {/* <Button title="Save" onPress={onSaveDetails} style={styles.saveButton} /> */}
-      <TouchableOpacity onPress={onSaveDetails} style={styles.saveButton}>
-        <Text style={styles.saveButtonText}>Save</Text>
-      </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 };
 
 export default ImageDetailsScreen;
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
     backgroundColor: "#2b2d3b",
-    paddingTop: 20,
   },
-  imageContainer: {
-    flex: 1,
-    paddingTop: 10,
-    alignItems: "center",
+  header: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    padding: 15,
   },
-  scrollContainer: {
-    flex: 1,
-    marginTop: 100, // Adjust based on the size of your image
+  container: {
+    flexGrow: 1,
+    justifyContent: "space-between",
+    padding: 20,
   },
   contentContainer: {
-    padding: 20,
+    flex: 1,
+    alignItems: "center",
+    paddingBottom: 20,
+  },
+  imageContainer: {
+    alignItems: "center",
+    marginBottom: 20,
   },
   label: {
     fontSize: 18,
@@ -128,26 +143,17 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 16,
-    marginBottom: 70,
     textAlign: "left",
     color: "#f5f5ed",
   },
-  //   saveButton: {
-  //     marginTop: 20,
-  //     marginHorizontal: 20,
-  //     backgroundColor: "#007BFF", // Background color of the button
-  //     borderRadius: 5, // Rounded corners
-  //     padding: 10, // Padding inside the button
-  //     alignItems: "center", // Center align text
-  //   },
   saveButton: {
-    marginTop: 10,
-    marginHorizontal: 20,
-    color: "#f0cf29",
+    backgroundColor: "#6c47ff",
+    padding: 15,
+    borderRadius: 8,
     alignItems: "center",
   },
   saveButtonText: {
-    color: "#dea835", // Text color of the button
+    color: "#dea835",
     fontSize: 16,
     fontWeight: "bold",
   },

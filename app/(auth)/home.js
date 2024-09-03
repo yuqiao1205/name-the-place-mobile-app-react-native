@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, Image, Platform } from "react-native";
+import { StyleSheet, Text, View, Platform, Image } from "react-native";
 import Button from "../../src/components/Button";
 import ImageViewer from "../../src/components/ImageViewer";
 import * as ImagePicker from "expo-image-picker";
@@ -13,6 +13,8 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as MediaLibrary from "expo-media-library"; // provides a usePermissions() hook that requests permissions to access the user's media library.
 import { captureRef } from "react-native-view-shot"; // captureRef() function to take a screenshot of the current view.
 import domtoimage from "dom-to-image";
+import { useRouter } from "expo-router";
+import * as ImageManipulator from "expo-image-manipulator";
 
 const PlaceholderImage = require("../../assets/event.jpg");
 
@@ -31,18 +33,71 @@ export default function App() {
   }
 
   const pickImageAsync = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      allowsEditing: true,
-      quality: 1,
-    });
+    if (Platform.OS === "web") {
+      // Web-specific code
+      const fileInput = document.createElement("input");
+      fileInput.type = "file";
+      fileInput.accept = "image/*";
+      fileInput.onchange = async (event) => {
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = async (e) => {
+            const imageUri = e.target.result;
 
-    if (!result.canceled) {
-      console.log("result:", result); // Add this line to check the result
-
-      setSelectedImage(result.assets[0].uri);
-      setShowAppOptions(false);
+            // Web-specific resize using canvas
+            const canvas = document.createElement("canvas");
+            const img = new window.Image(); // Use window.Image instead of Image
+            img.src = imageUri;
+            img.onload = () => {
+              const ctx = canvas.getContext("2d");
+              canvas.width = 512;
+              canvas.height = 512;
+              ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+              canvas.toBlob(async (blob) => {
+                const resizedUri = URL.createObjectURL(blob);
+                setSelectedImage(resizedUri);
+                setShowAppOptions(false);
+              }, "image/jpeg");
+            };
+          };
+          reader.readAsDataURL(file);
+        } else {
+          alert("You did not select any image.");
+        }
+      };
+      fileInput.click();
     } else {
-      alert("You did not select any image.");
+      // Mobile-specific code
+      let result = await ImagePicker.launchImageLibraryAsync({
+        allowsEditing: true,
+        quality: 1,
+      });
+
+      if (!result.canceled) {
+        console.log("result:", result);
+
+        const resizedImage = await ImageManipulator.manipulateAsync(
+          result.assets[0].uri,
+          [
+            {
+              resize: {
+                width: 512,
+                height: 512,
+              },
+            },
+          ],
+          {
+            compress: 1,
+            format: ImageManipulator.SaveFormat.JPEG,
+          }
+        );
+
+        setSelectedImage(resizedImage.uri);
+        setShowAppOptions(false);
+      } else {
+        alert("You did not select any image.");
+      }
     }
   };
 
@@ -78,8 +133,8 @@ export default function App() {
       try {
         const dataUrl = await domtoimage.toJpeg(imageRef.current, {
           quality: 0.95,
-          width: 320,
-          height: 440,
+          width: 300,
+          height: 350,
         });
 
         let link = document.createElement("a");
@@ -90,6 +145,18 @@ export default function App() {
         console.log(e);
       }
     }
+  };
+
+  const router = useRouter();
+
+  const onGoToDetails = () => {
+    router.push({
+      pathname: "(pages)/imageDetails",
+      params: {
+        selectedImage: selectedImage,
+        imageSize: 300, // Pass the image size to the details screen
+      },
+    });
   };
 
   return (
@@ -110,7 +177,12 @@ export default function App() {
       {showAppOptions ? (
         <View style={styles.optionsContainer}>
           <View style={styles.optionsRow}>
-            <IconButton icon="refresh" label="Reset" onPress={onReset} />
+            <IconButton
+              icon="refresh"
+              label="Reset"
+              onPress={onReset}
+              color="#1732e3"
+            />
             <CircleButton onPress={onAddSticker} />
             <IconButton
               icon="save-alt"
@@ -118,6 +190,10 @@ export default function App() {
               onPress={onSaveImageAsync}
             />
           </View>
+          <Button
+            label="NameThePlace"
+            onPress={onGoToDetails} // Navigate to ImageDetailsScreen
+          />
         </View>
       ) : (
         <View style={styles.footerContainer}>
@@ -144,7 +220,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#677778",
+    backgroundColor: "#2b2d3b",
     alignItems: "center",
   },
   imageContainer: {
@@ -152,16 +228,21 @@ const styles = StyleSheet.create({
     paddingTop: 60,
   },
   image: {
-    width: 320,
-    height: 440,
+    width: 300,
+    height: 350,
     borderRadius: 18,
   },
   optionsContainer: {
     position: "absolute",
-    bottom: 80,
+    bottom: 5,
+    width: "100%",
+    alignItems: "center",
   },
   optionsRow: {
     alignItems: "center",
     flexDirection: "row",
+    justifyContent: "space-between",
+    width: "82%",
+    marginBottom: 20,
   },
 });
