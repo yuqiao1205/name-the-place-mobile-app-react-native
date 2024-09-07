@@ -20,42 +20,18 @@ import Icon from "react-native-vector-icons/Ionicons";
 const ImageDetailsScreen = () => {
   const { selectedImage, imageSize } = useLocalSearchParams();
   const [description, setDescription] = useState("Beautiful Place"); // Default description
-  const [locationData, setLocationData] = useState({
-    latitude: 37.78825,
-    longitude: -122.4324,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
-  }); // Default location data
   const router = useRouter();
   const viewRef = useRef(null);
   const [isHovered, setIsHovered] = useState(false);
 
-  // Fetch the description and location data from the server
+  // Fetch the description from the server
   useEffect(() => {
     const getSimpleResponse = async () => {
       try {
         const response = await uploadImage(selectedImage);
         console.log("response:", response);
-
         if (response.success) {
-          // Check if response.answer is an object or a string
-          if (typeof response.answer === "object") {
-            // Handle case where answer is an object (convert to string or extract relevant data)
-            setDescription(JSON.stringify(response.answer)); // Or extract the necessary properties
-          } else {
-            setDescription(response.answer); // If it's a string, set it directly
-          }
-
-          // Assuming the response contains a 'places' array with location data
-          const place = response.places ? response.places[0] : null;
-          if (place) {
-            setLocationData({
-              latitude: place.latitude,
-              longitude: place.longitude,
-              latitudeDelta: 0.01,
-              longitudeDelta: 0.01,
-            });
-          }
+          setDescription(response.answer);
         }
       } catch (error) {
         console.error("Error fetching response:", error);
@@ -109,11 +85,7 @@ const ImageDetailsScreen = () => {
   };
 
   const navigateToMap = () => {
-    // Pass the location data when navigating to the map
-    router.replace({
-      pathname: "/map",
-      params: locationData, // Pass dynamic location data to the map
-    });
+    router.replace("/map");
   };
 
   return (

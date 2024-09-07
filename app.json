@@ -20,8 +20,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.yan.findplace",
-      "EXPO_PUBLIC_GOOGLE_API_KEY": "AIzaSyAqUWjfvCfudqvnIAVP0g60i9WtFhymUJg"
+      "package": "com.yan.findplace"
     },
     "scheme": "reactnative-study",
     "web": {
