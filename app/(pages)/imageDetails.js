@@ -84,11 +84,19 @@ const ImageDetailsScreen = () => {
     router.replace("/home");
   };
 
+  const navigateToMap = () => {
+    router.replace("/map");
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
         <TouchableOpacity onPress={navigateHome}>
           <Icon name="home-outline" size={30} color="white" />
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={navigateToMap}>
+          <Icon name="location-outline" size={30} color="white" />
         </TouchableOpacity>
       </View>
       <ScrollView contentContainerStyle={styles.container}>
