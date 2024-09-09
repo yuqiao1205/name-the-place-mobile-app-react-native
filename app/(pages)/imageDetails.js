@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useContext } from "react";
 import {
   View,
   Text,
@@ -16,8 +16,13 @@ import { captureRef } from "react-native-view-shot";
 import * as MediaLibrary from "expo-media-library";
 import { uploadImage } from "../../src/components/upload.js";
 import Icon from "react-native-vector-icons/Ionicons";
+import PlacesList from "../../src/components/PlacesList.js"; // Adjust the path as needed
+
+import { AppContext } from "../context.js";
 
 const ImageDetailsScreen = () => {
+  const { sharedState, setSharedState } = useContext(AppContext);
+
   const { selectedImage, imageSize } = useLocalSearchParams();
   const [description, setDescription] = useState("Beautiful Place"); // Default description
   const [locationData, setLocationData] = useState({
@@ -39,23 +44,23 @@ const ImageDetailsScreen = () => {
 
         if (response.success) {
           // Check if response.answer is an object or a string
-          if (typeof response.answer === "object") {
-            // Handle case where answer is an object (convert to string or extract relevant data)
-            setDescription(JSON.stringify(response.answer)); // Or extract the necessary properties
-          } else {
-            setDescription(response.answer); // If it's a string, set it directly
-          }
-
+          // if (typeof response.answer === "object") {
+          //   // Handle case where answer is an object (convert to string or extract relevant data)
+          //   setDescription(JSON.stringify(response.answer)); // Or extract the necessary properties
+          // } else {
+          //   setDescription(response.answer); // If it's a string, set it directly
+          // }
           // Assuming the response contains a 'places' array with location data
-          const place = response.places ? response.places[0] : null;
-          if (place) {
-            setLocationData({
-              latitude: place.latitude,
-              longitude: place.longitude,
-              latitudeDelta: 0.01,
-              longitudeDelta: 0.01,
-            });
-          }
+          // const place = response.places ? response.places[0] : null;
+          // if (place) {
+          //   setLocationData({
+          //     latitude: place.latitude,
+          //     longitude: place.longitude,
+          //     latitudeDelta: 0.01,
+          //     longitudeDelta: 0.01,
+          //   });
+          // }
+          setSharedState(response.answer);
         }
       } catch (error) {
         console.error("Error fetching response:", error);
@@ -135,8 +140,15 @@ const ImageDetailsScreen = () => {
               selectedImage={selectedImage}
             />
           </View>
-          <Text style={styles.label}>Location:</Text>
-          <Text style={styles.description}>{description}</Text>
+          {/* <Text style={styles.label}>Location:</Text> */}
+          {/* <Text style={styles.description}>
+            {JSON.stringify(sharedState, null, 2)}
+          </Text> */}
+
+          {/* conditionally render the location data  */}
+          {sharedState && sharedState.places && (
+            <PlacesList places={sharedState.places} />
+          )}
         </View>
         <TouchableOpacity
           onPress={onSaveDetails}

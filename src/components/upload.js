@@ -3,6 +3,11 @@ import { Platform } from "react-native";
 // Adjust the URL based on your environment
 const URL = "https://vercel-test2-silk.vercel.app/api/vision";
 
+// local server
+// const URL = "http://localhost:8000/api/vision";
+
+// URL = "http://192.168.1.119:5050/api/vision";
+
 const uploadImage = async (imageUri) => {
   const formData = new FormData();
 
