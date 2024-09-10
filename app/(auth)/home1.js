@@ -15,8 +15,6 @@ import { captureRef } from "react-native-view-shot"; // captureRef() function to
 import domtoimage from "dom-to-image";
 import { useRouter } from "expo-router";
 import * as ImageManipulator from "expo-image-manipulator";
-import { AppContext } from "../context.js";
-import { useContext } from "react";
 
 const PlaceholderImage = require("../../assets/event.jpg");
 
@@ -25,7 +23,6 @@ export default function App() {
   const [showAppOptions, setShowAppOptions] = useState(false); // for the app options
   const [isModalVisible, setIsModalVisible] = useState(false); // for the EmojiPicker
   const [pickedEmoji, setPickedEmoji] = useState(null); // for the picked emoji
-  const { sharedState, setSharedState } = useContext(AppContext); // Access sharedState and setSharedState
 
   const imageRef = useRef();
 
@@ -96,13 +93,7 @@ export default function App() {
           }
         );
 
-        // Update sharedState with the selected image
-        setSharedState((prevState) => ({
-          ...prevState,
-          sharedImage: resizedImage.uri, // Update sharedImage correctly
-        }));
-        console.log("sharedState after update:", sharedState);
-
+        setSelectedImage(resizedImage.uri);
         setShowAppOptions(false);
       } else {
         alert("You did not select any image.");
@@ -162,8 +153,8 @@ export default function App() {
     router.push({
       pathname: "(pages)/imageDetails",
       params: {
-        imageSize: 300,
-        selectedImage: sharedState?.sharedImage,
+        selectedImage: selectedImage,
+        imageSize: 300, // Pass the image size to the details screen
       },
     });
   };
@@ -174,7 +165,7 @@ export default function App() {
         <View ref={imageRef} collapsable={false}>
           <ImageViewer
             placeholderImageSource={PlaceholderImage}
-            selectedImage={sharedState?.sharedImage}
+            selectedImage={selectedImage}
           />
 
           {pickedEmoji && (

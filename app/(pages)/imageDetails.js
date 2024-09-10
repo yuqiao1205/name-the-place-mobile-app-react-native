@@ -22,15 +22,11 @@ import { AppContext } from "../context.js";
 
 const ImageDetailsScreen = () => {
   const { sharedState, setSharedState } = useContext(AppContext);
+  const selectedImage = sharedState?.sharedImage;
+  console.log("selectedImage is", selectedImage);
 
-  const { selectedImage, imageSize } = useLocalSearchParams();
-  const [description, setDescription] = useState("Beautiful Place"); // Default description
-  const [locationData, setLocationData] = useState({
-    latitude: 37.78825,
-    longitude: -122.4324,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
-  }); // Default location data
+  // const { selectedImage, imageSize } = useLocalSearchParams();
+
   const router = useRouter();
   const viewRef = useRef(null);
   const [isHovered, setIsHovered] = useState(false);
@@ -43,24 +39,11 @@ const ImageDetailsScreen = () => {
         console.log("response:", response);
 
         if (response.success) {
-          // Check if response.answer is an object or a string
-          // if (typeof response.answer === "object") {
-          //   // Handle case where answer is an object (convert to string or extract relevant data)
-          //   setDescription(JSON.stringify(response.answer)); // Or extract the necessary properties
-          // } else {
-          //   setDescription(response.answer); // If it's a string, set it directly
-          // }
-          // Assuming the response contains a 'places' array with location data
-          // const place = response.places ? response.places[0] : null;
-          // if (place) {
-          //   setLocationData({
-          //     latitude: place.latitude,
-          //     longitude: place.longitude,
-          //     latitudeDelta: 0.01,
-          //     longitudeDelta: 0.01,
-          //   });
-          // }
-          setSharedState(response.answer);
+          // setSharedState(response.answer);
+          setSharedState((prevState) => ({
+            ...prevState, // Preserve the previous state (including sharedImage)
+            places: response.answer.places || [], // Only update places
+          }));
         }
       } catch (error) {
         console.error("Error fetching response:", error);
@@ -117,7 +100,6 @@ const ImageDetailsScreen = () => {
     // Pass the location data when navigating to the map
     router.replace({
       pathname: "/map",
-      params: locationData, // Pass dynamic location data to the map
     });
   };
 
@@ -140,15 +122,13 @@ const ImageDetailsScreen = () => {
               selectedImage={selectedImage}
             />
           </View>
-          {/* <Text style={styles.label}>Location:</Text> */}
-          {/* <Text style={styles.description}>
-            {JSON.stringify(sharedState, null, 2)}
-          </Text> */}
-
-          {/* conditionally render the location data  */}
-          {sharedState && sharedState.places && (
-            <PlacesList places={sharedState.places} />
-          )}
+          <Text style={styles.label}>Location:</Text>
+          <Text style={styles.description}>
+            {/* conditionally render the location data  */}
+            {sharedState && sharedState.places && (
+              <PlacesList places={sharedState.places} />
+            )}
+          </Text>
         </View>
         <TouchableOpacity
           onPress={onSaveDetails}

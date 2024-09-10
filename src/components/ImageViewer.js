@@ -1,11 +1,12 @@
 import { StyleSheet, Image } from "react-native";
+import React, { useContext } from "react";
 
 export default function ImageViewer({ placeholderImageSource, selectedImage }) {
   const imageSource = selectedImage
     ? { uri: selectedImage }
     : placeholderImageSource;
 
-  console.log("Image source:", imageSource);
+  console.log("image vierwer Image source:", imageSource);
 
   return (
     <Image
